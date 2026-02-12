@@ -42,216 +42,214 @@ export terminal.showCursor
 export terminal.Style
 
 type
-  ForegroundColor* = enum   ## Foreground colors
-    fgNone = 0,             ## default
-    fgBlack = 30,           ## black
-    fgRed,                  ## red
-    fgGreen,                ## green
-    fgYellow,               ## yellow
-    fgBlue,                 ## blue
-    fgMagenta,              ## magenta
-    fgCyan,                 ## cyan
-    fgWhite                 ## white
+  ForegroundColor* = enum ## Foreground colors
+    fgNone = 0 ## default
+    fgBlack = 30 ## black
+    fgRed ## red
+    fgGreen ## green
+    fgYellow ## yellow
+    fgBlue ## blue
+    fgMagenta ## magenta
+    fgCyan ## cyan
+    fgWhite ## white
 
-  BackgroundColor* = enum   ## Background colors
-    bgNone = 0,             ## default (transparent)
-    bgBlack = 40,           ## black
-    bgRed,                  ## red
-    bgGreen,                ## green
-    bgYellow,               ## yellow
-    bgBlue,                 ## blue
-    bgMagenta,              ## magenta
-    bgCyan,                 ## cyan
-    bgWhite                 ## white
+  BackgroundColor* = enum ## Background colors
+    bgNone = 0 ## default (transparent)
+    bgBlack = 40 ## black
+    bgRed ## red
+    bgGreen ## green
+    bgYellow ## yellow
+    bgBlue ## blue
+    bgMagenta ## magenta
+    bgCyan ## cyan
+    bgWhite ## white
 
-  Key* {.pure.} = enum      ## Supported single key presses and key combinations
-    None = (-1, "None"),
+  Key* {.pure.} = enum ## Supported single key presses and key combinations
+    None = (-1, "None")
 
     # Special ASCII characters
-    CtrlA  = (1, "CtrlA"),
-    CtrlB  = (2, "CtrlB"),
-    CtrlC  = (3, "CtrlC"),
-    CtrlD  = (4, "CtrlD"),
-    CtrlE  = (5, "CtrlE"),
-    CtrlF  = (6, "CtrlF"),
-    CtrlG  = (7, "CtrlG"),
-    CtrlH  = (8, "CtrlH"),
-    Tab    = (9, "Tab"),     # Ctrl-I
-    CtrlJ  = (10, "CtrlJ"),
-    CtrlK  = (11, "CtrlK"),
-    CtrlL  = (12, "CtrlL"),
-    Enter  = (13, "Enter"),  # Ctrl-M
-    CtrlN  = (14, "CtrlN"),
-    CtrlO  = (15, "CtrlO"),
-    CtrlP  = (16, "CtrlP"),
-    CtrlQ  = (17, "CtrlQ"),
-    CtrlR  = (18, "CtrlR"),
-    CtrlS  = (19, "CtrlS"),
-    CtrlT  = (20, "CtrlT"),
-    CtrlU  = (21, "CtrlU"),
-    CtrlV  = (22, "CtrlV"),
-    CtrlW  = (23, "CtrlW"),
-    CtrlX  = (24, "CtrlX"),
-    CtrlY  = (25, "CtrlY"),
-    CtrlZ  = (26, "CtrlZ"),
-    Escape = (27, "Escape"),
-
-    CtrlBackslash    = (28, "CtrlBackslash"),
-    CtrlRightBracket = (29, "CtrlRightBracket"),
+    CtrlA = (1, "CtrlA")
+    CtrlB = (2, "CtrlB")
+    CtrlC = (3, "CtrlC")
+    CtrlD = (4, "CtrlD")
+    CtrlE = (5, "CtrlE")
+    CtrlF = (6, "CtrlF")
+    CtrlG = (7, "CtrlG")
+    CtrlH = (8, "CtrlH")
+    Tab = (9, "Tab") # Ctrl-I
+    CtrlJ = (10, "CtrlJ")
+    CtrlK = (11, "CtrlK")
+    CtrlL = (12, "CtrlL")
+    Enter = (13, "Enter") # Ctrl-M
+    CtrlN = (14, "CtrlN")
+    CtrlO = (15, "CtrlO")
+    CtrlP = (16, "CtrlP")
+    CtrlQ = (17, "CtrlQ")
+    CtrlR = (18, "CtrlR")
+    CtrlS = (19, "CtrlS")
+    CtrlT = (20, "CtrlT")
+    CtrlU = (21, "CtrlU")
+    CtrlV = (22, "CtrlV")
+    CtrlW = (23, "CtrlW")
+    CtrlX = (24, "CtrlX")
+    CtrlY = (25, "CtrlY")
+    CtrlZ = (26, "CtrlZ")
+    Escape = (27, "Escape")
+    CtrlBackslash = (28, "CtrlBackslash")
+    CtrlRightBracket = (29, "CtrlRightBracket")
 
     # Printable ASCII characters
-    Space           = (32, "Space"),
-    ExclamationMark = (33, "ExclamationMark"),
-    DoubleQuote     = (34, "DoubleQuote"),
-    Hash            = (35, "Hash"),
-    Dollar          = (36, "Dollar"),
-    Percent         = (37, "Percent"),
-    Ampersand       = (38, "Ampersand"),
-    SingleQuote     = (39, "SingleQuote"),
-    LeftParen       = (40, "LeftParen"),
-    RightParen      = (41, "RightParen"),
-    Asterisk        = (42, "Asterisk"),
-    Plus            = (43, "Plus"),
-    Comma           = (44, "Comma"),
-    Minus           = (45, "Minus"),
-    Dot             = (46, "Dot"),
-    Slash           = (47, "Slash"),
-
-    Zero  = (48, "Zero"),
-    One   = (49, "One"),
-    Two   = (50, "Two"),
-    Three = (51, "Three"),
-    Four  = (52, "Four"),
-    Five  = (53, "Five"),
-    Six   = (54, "Six"),
-    Seven = (55, "Seven"),
-    Eight = (56, "Eight"),
-    Nine  = (57, "Nine"),
-
-    Colon        = (58, "Colon"),
-    Semicolon    = (59, "Semicolon"),
-    LessThan     = (60, "LessThan"),
-    Equals       = (61, "Equals"),
-    GreaterThan  = (62, "GreaterThan"),
-    QuestionMark = (63, "QuestionMark"),
-    At           = (64, "At"),
-
-    ShiftA  = (65, "ShiftA"),
-    ShiftB  = (66, "ShiftB"),
-    ShiftC  = (67, "ShiftC"),
-    ShiftD  = (68, "ShiftD"),
-    ShiftE  = (69, "ShiftE"),
-    ShiftF  = (70, "ShiftF"),
-    ShiftG  = (71, "ShiftG"),
-    ShiftH  = (72, "ShiftH"),
-    ShiftI  = (73, "ShiftI"),
-    ShiftJ  = (74, "ShiftJ"),
-    ShiftK  = (75, "ShiftK"),
-    ShiftL  = (76, "ShiftL"),
-    ShiftM  = (77, "ShiftM"),
-    ShiftN  = (78, "ShiftN"),
-    ShiftO  = (79, "ShiftO"),
-    ShiftP  = (80, "ShiftP"),
-    ShiftQ  = (81, "ShiftQ"),
-    ShiftR  = (82, "ShiftR"),
-    ShiftS  = (83, "ShiftS"),
-    ShiftT  = (84, "ShiftT"),
-    ShiftU  = (85, "ShiftU"),
-    ShiftV  = (86, "ShiftV"),
-    ShiftW  = (87, "ShiftW"),
-    ShiftX  = (88, "ShiftX"),
-    ShiftY  = (89, "ShiftY"),
-    ShiftZ  = (90, "ShiftZ"),
-
-    LeftBracket  = (91, "LeftBracket"),
-    Backslash    = (92, "Backslash"),
-    RightBracket = (93, "RightBracket"),
-    Caret        = (94, "Caret"),
-    Underscore   = (95, "Underscore"),
-    GraveAccent  = (96, "GraveAccent"),
-
-    A = (97, "A"),
-    B = (98, "B"),
-    C = (99, "C"),
-    D = (100, "D"),
-    E = (101, "E"),
-    F = (102, "F"),
-    G = (103, "G"),
-    H = (104, "H"),
-    I = (105, "I"),
-    J = (106, "J"),
-    K = (107, "K"),
-    L = (108, "L"),
-    M = (109, "M"),
-    N = (110, "N"),
-    O = (111, "O"),
-    P = (112, "P"),
-    Q = (113, "Q"),
-    R = (114, "R"),
-    S = (115, "S"),
-    T = (116, "T"),
-    U = (117, "U"),
-    V = (118, "V"),
-    W = (119, "W"),
-    X = (120, "X"),
-    Y = (121, "Y"),
-    Z = (122, "Z"),
-
-    LeftBrace  = (123, "LeftBrace"),
-    Pipe       = (124, "Pipe"),
-    RightBrace = (125, "RightBrace"),
-    Tilde      = (126, "Tilde"),
-    Backspace  = (127, "Backspace"),
+    Space = (32, "Space")
+    ExclamationMark = (33, "ExclamationMark")
+    DoubleQuote = (34, "DoubleQuote")
+    Hash = (35, "Hash")
+    Dollar = (36, "Dollar")
+    Percent = (37, "Percent")
+    Ampersand = (38, "Ampersand")
+    SingleQuote = (39, "SingleQuote")
+    LeftParen = (40, "LeftParen")
+    RightParen = (41, "RightParen")
+    Asterisk = (42, "Asterisk")
+    Plus = (43, "Plus")
+    Comma = (44, "Comma")
+    Minus = (45, "Minus")
+    Dot = (46, "Dot")
+    Slash = (47, "Slash")
+    Zero = (48, "Zero")
+    One = (49, "One")
+    Two = (50, "Two")
+    Three = (51, "Three")
+    Four = (52, "Four")
+    Five = (53, "Five")
+    Six = (54, "Six")
+    Seven = (55, "Seven")
+    Eight = (56, "Eight")
+    Nine = (57, "Nine")
+    Colon = (58, "Colon")
+    Semicolon = (59, "Semicolon")
+    LessThan = (60, "LessThan")
+    Equals = (61, "Equals")
+    GreaterThan = (62, "GreaterThan")
+    QuestionMark = (63, "QuestionMark")
+    At = (64, "At")
+    ShiftA = (65, "ShiftA")
+    ShiftB = (66, "ShiftB")
+    ShiftC = (67, "ShiftC")
+    ShiftD = (68, "ShiftD")
+    ShiftE = (69, "ShiftE")
+    ShiftF = (70, "ShiftF")
+    ShiftG = (71, "ShiftG")
+    ShiftH = (72, "ShiftH")
+    ShiftI = (73, "ShiftI")
+    ShiftJ = (74, "ShiftJ")
+    ShiftK = (75, "ShiftK")
+    ShiftL = (76, "ShiftL")
+    ShiftM = (77, "ShiftM")
+    ShiftN = (78, "ShiftN")
+    ShiftO = (79, "ShiftO")
+    ShiftP = (80, "ShiftP")
+    ShiftQ = (81, "ShiftQ")
+    ShiftR = (82, "ShiftR")
+    ShiftS = (83, "ShiftS")
+    ShiftT = (84, "ShiftT")
+    ShiftU = (85, "ShiftU")
+    ShiftV = (86, "ShiftV")
+    ShiftW = (87, "ShiftW")
+    ShiftX = (88, "ShiftX")
+    ShiftY = (89, "ShiftY")
+    ShiftZ = (90, "ShiftZ")
+    LeftBracket = (91, "LeftBracket")
+    Backslash = (92, "Backslash")
+    RightBracket = (93, "RightBracket")
+    Caret = (94, "Caret")
+    Underscore = (95, "Underscore")
+    GraveAccent = (96, "GraveAccent")
+    A = (97, "A")
+    B = (98, "B")
+    C = (99, "C")
+    D = (100, "D")
+    E = (101, "E")
+    F = (102, "F")
+    G = (103, "G")
+    H = (104, "H")
+    I = (105, "I")
+    J = (106, "J")
+    K = (107, "K")
+    L = (108, "L")
+    M = (109, "M")
+    N = (110, "N")
+    O = (111, "O")
+    P = (112, "P")
+    Q = (113, "Q")
+    R = (114, "R")
+    S = (115, "S")
+    T = (116, "T")
+    U = (117, "U")
+    V = (118, "V")
+    W = (119, "W")
+    X = (120, "X")
+    Y = (121, "Y")
+    Z = (122, "Z")
+    LeftBrace = (123, "LeftBrace")
+    Pipe = (124, "Pipe")
+    RightBrace = (125, "RightBrace")
+    Tilde = (126, "Tilde")
+    Backspace = (127, "Backspace")
 
     # Special characters with virtual keycodes
-    Up       = (1001, "Up"),
-    Down     = (1002, "Down"),
-    Right    = (1003, "Right"),
-    Left     = (1004, "Left"),
-    Home     = (1005, "Home"),
-    Insert   = (1006, "Insert"),
-    Delete   = (1007, "Delete"),
-    End      = (1008, "End"),
-    PageUp   = (1009, "PageUp"),
-    PageDown = (1010, "PageDown"),
-
-    F1  = (1011, "F1"),
-    F2  = (1012, "F2"),
-    F3  = (1013, "F3"),
-    F4  = (1014, "F4"),
-    F5  = (1015, "F5"),
-    F6  = (1016, "F6"),
-    F7  = (1017, "F7"),
-    F8  = (1018, "F8"),
-    F9  = (1019, "F9"),
-    F10 = (1020, "F10"),
-    F11 = (1021, "F11"),
-    F12 = (1022, "F12"),
-
+    Up = (1001, "Up")
+    Down = (1002, "Down")
+    Right = (1003, "Right")
+    Left = (1004, "Left")
+    Home = (1005, "Home")
+    Insert = (1006, "Insert")
+    Delete = (1007, "Delete")
+    End = (1008, "End")
+    PageUp = (1009, "PageUp")
+    PageDown = (1010, "PageDown")
+    F1 = (1011, "F1")
+    F2 = (1012, "F2")
+    F3 = (1013, "F3")
+    F4 = (1014, "F4")
+    F5 = (1015, "F5")
+    F6 = (1016, "F6")
+    F7 = (1017, "F7")
+    F8 = (1018, "F8")
+    F9 = (1019, "F9")
+    F10 = (1020, "F10")
+    F11 = (1021, "F11")
+    F12 = (1022, "F12")
     Mouse = (5000, "Mouse")
 
   IllwillError* = object of CatchableError
 
 type
   MouseButtonAction* {.pure.} = enum
-    mbaNone, mbaPressed, mbaReleased
+    mbaNone
+    mbaPressed
+    mbaReleased
 
   MouseInfo* = object
-    x*:         int                ## X mouse position
-    y*:         int                ## Y mouse position
-    button*:    MouseButton        ## which button was pressed
-    action*:    MouseButtonAction  ## if button was released or pressed
-    ctrl*:      bool               ## was Ctrl down
-    shift*:     bool               ## was Shift down
-    scroll*:    bool               ## if this is a mouse scroll event
-    scrollDir*: ScrollDirection    ## scroll direction
-    move*:      bool               ## if this is a mouse move event
+    x*: int ## X mouse position
+    y*: int ## Y mouse position
+    button*: MouseButton ## which button was pressed
+    action*: MouseButtonAction ## if button was released or pressed
+    ctrl*: bool ## was Ctrl down
+    shift*: bool ## was Shift down
+    scroll*: bool ## if this is a mouse scroll event
+    scrollDir*: ScrollDirection ## scroll direction
+    move*: bool ## if this is a mouse move event
 
   MouseButton* {.pure.} = enum
-    mbNone, mbLeft, mbMiddle, mbRight
+    mbNone
+    mbLeft
+    mbMiddle
+    mbRight
 
   ScrollDirection* {.pure.} = enum
-    sdNone, sdUp, sdDown
+    sdNone
+    sdUp
+    sdDown
 
 var
   gMouseInfo = MouseInfo()
@@ -288,17 +286,15 @@ proc getMouse*(): MouseInfo =
 
   return gMouseInfo
 
-
-{.push warning[HoleEnumConv]:off.}
+{.push warning[HoleEnumConv]: off.}
 
 func toKey(c: int): Key =
   try:
     result = Key(c)
-  except RangeDefect:  # ignore unknown keycodes
+  except RangeDefect: # ignore unknown keycodes
     result = Key.None
 
-{.pop}
-
+{.pop.}
 
 var gIllwillInitialised = false
 var gFullScreen = false
@@ -307,15 +303,16 @@ var gFullRedrawNextFrame = false
 when defined(windows):
   import encodings, winlean
 
-  proc getConsoleMode(hConsoleHandle: Handle, dwMode: ptr DWORD): WINBOOL {.
-      stdcall, dynlib: "kernel32", importc: "GetConsoleMode".}
+  proc getConsoleMode(
+    hConsoleHandle: Handle, dwMode: ptr DWORD
+  ): WINBOOL {.stdcall, dynlib: "kernel32", importc: "GetConsoleMode".}
 
-  proc setConsoleMode(hConsoleHandle: Handle, dwMode: DWORD): WINBOOL {.
-      stdcall, dynlib: "kernel32", importc: "SetConsoleMode".}
+  proc setConsoleMode(
+    hConsoleHandle: Handle, dwMode: DWORD
+  ): WINBOOL {.stdcall, dynlib: "kernel32", importc: "SetConsoleMode".}
 
   # Mouse
-  const
-    INPUT_BUFFER_LEN = 512
+  const INPUT_BUFFER_LEN = 512
 
   const
     ENABLE_MOUSE_INPUT = 0x10
@@ -334,8 +331,7 @@ when defined(windows):
     RIGHT_CTRL_PRESSED = 0x0004
     SHIFT_PRESSED = 0x0010
 
-  const
-    MOUSE_WHEELED = 0x0004
+  const MOUSE_WHEELED = 0x0004
 
   type
     WCHAR = WinChar
@@ -387,12 +383,14 @@ when defined(windows):
     PINPUT_RECORD = ptr array[INPUT_BUFFER_LEN, INPUT_RECORD]
     LPDWORD = PDWORD
 
-  proc peekConsoleInputA(hConsoleInput: HANDLE, lpBuffer: PINPUT_RECORD,
-                         nLength: DWORD, lpNumberOfEventsRead: LPDWORD): WINBOOL
-    {.stdcall, dynlib: "kernel32", importc: "PeekConsoleInputA".}
+  proc peekConsoleInputA(
+    hConsoleInput: HANDLE,
+    lpBuffer: PINPUT_RECORD,
+    nLength: DWORD,
+    lpNumberOfEventsRead: LPDWORD,
+  ): WINBOOL {.stdcall, dynlib: "kernel32", importc: "PeekConsoleInputA".}
 
-  const
-    ENABLE_WRAP_AT_EOL_OUTPUT   = 0x0002
+  const ENABLE_WRAP_AT_EOL_OUTPUT = 0x0002
 
   var gOldConsoleModeInput: DWORD
   var gOldConsoleMode: DWORD
@@ -437,39 +435,68 @@ when defined(windows):
       return toKey((event.uChar))
     else:
       case event.wVirtualScanCode
-      of  8: return Key.Backspace
-      of  9: return Key.Tab
-      of 13: return Key.Enter
-      of 32: return Key.Space
-      of 59: return Key.F1
-      of 60: return Key.F2
-      of 61: return Key.F3
-      of 62: return Key.F4
-      of 63: return Key.F5
-      of 64: return Key.F6
-      of 65: return Key.F7
-      of 66: return Key.F8
-      of 67: return Key.F9
-      of 68: return Key.F10
-      of 71: return Key.Home
-      of 72: return Key.Up
-      of 73: return Key.PageUp
-      of 75: return Key.Left
-      of 77: return Key.Right
-      of 79: return Key.End
-      of 80: return Key.Down
-      of 81: return Key.PageDown
-      of 82: return Key.Insert
-      of 83: return Key.Delete
-      of 87: return Key.F11
-      of 88: return Key.F12
-      else:  return Key.None
+      of 8:
+        return Key.Backspace
+      of 9:
+        return Key.Tab
+      of 13:
+        return Key.Enter
+      of 32:
+        return Key.Space
+      of 59:
+        return Key.F1
+      of 60:
+        return Key.F2
+      of 61:
+        return Key.F3
+      of 62:
+        return Key.F4
+      of 63:
+        return Key.F5
+      of 64:
+        return Key.F6
+      of 65:
+        return Key.F7
+      of 66:
+        return Key.F8
+      of 67:
+        return Key.F9
+      of 68:
+        return Key.F10
+      of 71:
+        return Key.Home
+      of 72:
+        return Key.Up
+      of 73:
+        return Key.PageUp
+      of 75:
+        return Key.Left
+      of 77:
+        return Key.Right
+      of 79:
+        return Key.End
+      of 80:
+        return Key.Down
+      of 81:
+        return Key.PageDown
+      of 82:
+        return Key.Insert
+      of 83:
+        return Key.Delete
+      of 87:
+        return Key.F11
+      of 88:
+        return Key.F12
+      else:
+        return Key.None
 
-  proc writeConsole(hConsoleOutput: HANDLE, lpBuffer: pointer,
-                    nNumberOfCharsToWrite: DWORD,
-                    lpNumberOfCharsWritten: ptr DWORD,
-                    lpReserved: pointer): WINBOOL {.
-    stdcall, dynlib: "kernel32", importc: "WriteConsoleW".}
+  proc writeConsole(
+    hConsoleOutput: HANDLE,
+    lpBuffer: pointer,
+    nNumberOfCharsToWrite: DWORD,
+    lpNumberOfCharsWritten: ptr DWORD,
+    lpReserved: pointer,
+  ): WINBOOL {.stdcall, dynlib: "kernel32", importc: "WriteConsoleW".}
 
   var hStdout = getStdHandle(STD_OUTPUT_HANDLE)
   var utf16LEConverter = open(destEncoding = "utf-16", srcEncoding = "UTF-8")
@@ -477,10 +504,10 @@ when defined(windows):
   proc put(s: string) =
     var us = utf16LEConverter.convert(s)
     var numWritten: DWORD
-    discard writeConsole(hStdout, pointer(us[0].addr), DWORD(s.runeLen),
-                         numWritten.addr, nil)
+    discard
+      writeConsole(hStdout, pointer(us[0].addr), DWORD(s.runeLen), numWritten.addr, nil)
 
-else:  # OS X & Linux
+else: # OS X & Linux
   import posix, tables, termios
   import strutils, strformat
 
@@ -498,9 +525,12 @@ else:  # OS X & Linux
     # SET_URXVT_EXT_MODE_MOUSE = "1015"
     ENABLE = "h"
     DISABLE = "l"
-    MouseTrackAny = fmt"{CSI}?{SET_BTN_EVENT_MOUSE}{ENABLE}{CSI}?{SET_ANY_EVENT_MOUSE}{ENABLE}{CSI}?{SET_SGR_EXT_MODE_MOUSE}{ENABLE}"
-    DisableMouseTrackAny = fmt"{CSI}?{SET_BTN_EVENT_MOUSE}{DISABLE}{CSI}?{SET_ANY_EVENT_MOUSE}{DISABLE}{CSI}?{SET_SGR_EXT_MODE_MOUSE}{DISABLE}"
-    KEYS_D = [Key.Up, Key.Down, Key.Right, Key.Left, Key.None, Key.End, Key.None, Key.Home]
+    MouseTrackAny =
+      fmt"{CSI}?{SET_BTN_EVENT_MOUSE}{ENABLE}{CSI}?{SET_ANY_EVENT_MOUSE}{ENABLE}{CSI}?{SET_SGR_EXT_MODE_MOUSE}{ENABLE}"
+    DisableMouseTrackAny =
+      fmt"{CSI}?{SET_BTN_EVENT_MOUSE}{DISABLE}{CSI}?{SET_ANY_EVENT_MOUSE}{DISABLE}{CSI}?{SET_SGR_EXT_MODE_MOUSE}{DISABLE}"
+    KEYS_D =
+      [Key.Up, Key.Down, Key.Right, Key.Left, Key.None, Key.End, Key.None, Key.Home]
     KEYS_E = [Key.Delete, Key.End, Key.PageUp, Key.PageDown, Key.Home, Key.End]
     KEYS_F = [Key.F1, Key.F2, Key.F3, Key.F4, Key.F5, Key.None, Key.F6, Key.F7, Key.F8]
     KEYS_G = [Key.F9, Key.F10, Key.None, Key.F11, Key.F12]
@@ -539,7 +569,6 @@ else:  # OS X & Linux
 
       # minimum of number input read
       ttyState.c_cc[VMIN] = 0.char
-
     else:
       # turn on canonical mode & echo
       ttyState.c_lflag = ttyState.c_lflag or ICANON or ECHO
@@ -555,7 +584,7 @@ else:  # OS X & Linux
     var fds: TFdSet
     FD_ZERO(fds)
     FD_SET(STDIN_FILENO, fds)
-    discard select(STDIN_FILENO+1, fds.addr, nil, nil, tv.addr)
+    discard select(STDIN_FILENO + 1, fds.addr, nil, nil, tv.addr)
     return FD_ISSET(STDIN_FILENO, fds)
 
   proc consoleInit() =
@@ -576,7 +605,7 @@ else:  # OS X & Linux
     ## splits the input buffer to extract mouse coordinates
     var parts: seq[seq[int]] = @[]
     var cur: seq[int] = @[]
-    for ch in inp[CSI.len+1 .. max-1]:
+    for ch in inp[CSI.len + 1 .. max - 1]:
       if ch == ord('M'):
         # Button press
         parts.add(cur)
@@ -600,7 +629,7 @@ else:  # OS X & Linux
       str &= $(ch.chr)
     result = parseInt(str)
 
-  proc fillGlobalMouseInfo(keyBuf: array[KeySequenceMaxLen, int]) =
+  proc fillGlobalMouseInfo(keyBuf: openArray[int]) =
     let parts = splitInputs(keyBuf, keyBuf.len)
     gMouseInfo.x = parts[1].getPos() - 1
     gMouseInfo.y = parts[2].getPos() - 1
@@ -611,9 +640,12 @@ else:  # OS X & Linux
     gMouseInfo.move = bitset.testBit(5)
 
     case ((bitset.uint8 shl 6) shr 6).int
-    of 0: gMouseInfo.button = MouseButton.mbLeft
-    of 1: gMouseInfo.button = MouseButton.mbMiddle
-    of 2: gMouseInfo.button = MouseButton.mbRight
+    of 0:
+      gMouseInfo.button = MouseButton.mbLeft
+    of 1:
+      gMouseInfo.button = MouseButton.mbMiddle
+    of 2:
+      gMouseInfo.button = MouseButton.mbRight
     else:
       gMouseInfo.action = MouseButtonAction.mbaNone
       # Move sends 3, but we ignore
@@ -624,8 +656,10 @@ else:  # OS X & Linux
     if gMouseInfo.scroll:
       # On scroll button=3 is reported, but we want no button pressed
       gMouseInfo.button = MouseButton.mbNone
-      if bitset.testBit(0): gMouseInfo.scrollDir = ScrollDirection.sdDown
-      else: gMouseInfo.scrollDir = ScrollDirection.sdUp
+      if bitset.testBit(0):
+        gMouseInfo.scrollDir = ScrollDirection.sdDown
+      else:
+        gMouseInfo.scrollDir = ScrollDirection.sdUp
     else:
       gMouseInfo.scrollDir = ScrollDirection.sdNone
 
@@ -642,7 +676,16 @@ else:  # OS X & Linux
             elif ch3 in "PQRS":
               result = KEYS_F[int(ch3) - int('P')]
           elif ch2 == '[' and read(input, ch3.addr, 1) > 0:
-            if ch3 in "ABCDFH":
+            if ch3 == '<':
+              keyBuf[0 .. 2] = [ord(ch1), ord(ch2), ord(ch3)]
+              for i in 3 .. KeySequenceMaxLen - 1:
+                if read(input, keyBuf[i].addr, 1) <= 0:
+                  break
+                if keyBuf[i] == ord('M') or keyBuf[i] == ord('m'):
+                  fillGlobalMouseInfo(keyBuf[0 .. i])
+                  result = Key.Mouse
+                  break
+            elif ch3 in "ABCDFH":
               result = KEYS_D[int(ch3) - int('A')]
             elif ch3 in "PQRS":
               result = KEYS_F[int(ch3) - int('P')]
@@ -659,9 +702,9 @@ else:  # OS X & Linux
             elif ch3 in "345678" and read(input, ch4.addr, 1) > 0 and ch4 == '~':
               result = KEYS_E[int(ch3) - int('3')]
             else:
-              discard   # if cannot parse full seq it is discarded
+              discard # if cannot parse full seq it is discarded
           else:
-            discard     # if cannot parse full seq it is discarded
+            discard # if cannot parse full seq it is discarded
         else:
           result = Key.Escape
       of '\n':
@@ -676,17 +719,18 @@ else:  # OS X & Linux
     if kbhit(ms) > 0:
       result = parseStdin(cint(STDIN_FILENO))
 
-  template put(s: string) = stdout.write s
+  template put(s: string) =
+    stdout.write s
 
 when defined(posix):
   const
-    XtermColor    = "xterm-color"
+    XtermColor = "xterm-color"
     Xterm256Color = "xterm-256color"
 
 proc enterFullScreen() =
   ## Enters full-screen mode (clears the terminal).
   when defined(posix):
-    case getEnv("TERM"):
+    case getEnv("TERM")
     of XtermColor:
       stdout.write "\e7\e[?47h"
     of Xterm256Color:
@@ -699,7 +743,7 @@ proc enterFullScreen() =
 proc exitFullScreen() =
   ## Exits full-screen mode (restores the previous contents of the terminal).
   when defined(posix):
-    case getEnv("TERM"):
+    case getEnv("TERM")
     of XtermColor:
       stdout.write "\e[2J\e[?47l\e8"
     of Xterm256Color:
@@ -718,20 +762,22 @@ when defined(posix):
   proc disableMouse() =
     stdout.write(DisableMouseTrackAny)
     stdout.flushFile()
+
 else:
   proc enableMouse(hConsoleInput: Handle) =
     var currentMode: DWORD
     discard getConsoleMode(hConsoleInput, currentMode.addr)
-    discard setConsoleMode(hConsoleInput,
+    discard setConsoleMode(
+      hConsoleInput,
       ENABLE_WINDOW_INPUT or ENABLE_MOUSE_INPUT or ENABLE_EXTENDED_FLAGS or
-      (currentMode and ENABLE_QUICK_EDIT_MODE.bitnot())
+        (currentMode and ENABLE_QUICK_EDIT_MODE.bitnot()),
     )
 
   proc disableMouse(hConsoleInput: Handle, oldConsoleMode: DWORD) =
     # TODO remove mouse option only?
     discard setConsoleMode(hConsoleInput, oldConsoleMode)
 
-proc illwillInit*(fullScreen: bool=true, mouse: bool=false) =
+proc illwillInit*(fullScreen: bool = true, mouse: bool = false) =
   ## Initializes the terminal and enables non-blocking keyboard input. Needs
   ## to be called before doing anything with the library.
   ##
@@ -742,7 +788,8 @@ proc illwillInit*(fullScreen: bool=true, mouse: bool=false) =
   if gIllwillInitialised:
     raise newException(IllwillError, "Illwill already initialised")
   gFullScreen = fullScreen
-  if gFullScreen: enterFullScreen()
+  if gFullScreen:
+    enterFullScreen()
 
   consoleInit()
   gMouse = mouse
@@ -764,7 +811,8 @@ proc illwillDeinit*() =
   ##
   ## If the module is not intialised, `IllwillError` is raised.
   checkInit()
-  if gFullScreen: exitFullScreen()
+  if gFullScreen:
+    exitFullScreen()
   if gMouse:
     when defined(posix):
       disableMouse()
@@ -776,9 +824,9 @@ proc illwillDeinit*() =
   showCursor()
 
 when defined(windows):
-
   template alias(newName: untyped, call: untyped) =
-    template newName(): untyped = call
+    template newName(): untyped =
+      call
 
   var gLastMouseInfo = MouseInfo()
 
@@ -789,10 +837,14 @@ when defined(windows):
     gMouseInfo.y = me.dwMousePosition.Y
 
     case me.dwButtonState
-    of FROM_LEFT_1ST_BUTTON_PRESSED: gMouseInfo.button = mbLeft
-    of FROM_LEFT_2ND_BUTTON_PRESSED: gMouseInfo.button = mbMiddle
-    of RIGHTMOST_BUTTON_PRESSED:     gMouseInfo.button = mbRight
-    else:                            gMouseInfo.button = mbNone
+    of FROM_LEFT_1ST_BUTTON_PRESSED:
+      gMouseInfo.button = mbLeft
+    of FROM_LEFT_2ND_BUTTON_PRESSED:
+      gMouseInfo.button = mbMiddle
+    of RIGHTMOST_BUTTON_PRESSED:
+      gMouseInfo.button = mbRight
+    else:
+      gMouseInfo.button = mbNone
 
     if gMouseInfo.button != mbNone:
       gMouseInfo.action = MouseButtonAction.mbaPressed
@@ -817,34 +869,40 @@ when defined(windows):
       gMouseInfo.scrollDir = ScrollDirection.sdNone
 
     gMouseInfo.ctrl = (
-        bitand(me.dwControlKeyState, LEFT_CTRL_PRESSED) == LEFT_CTRL_PRESSED or
-        bitand(me.dwControlKeyState, RIGHT_CTRL_PRESSED) == RIGHT_CTRL_PRESSED
+      bitand(me.dwControlKeyState, LEFT_CTRL_PRESSED) == LEFT_CTRL_PRESSED or
+      bitand(me.dwControlKeyState, RIGHT_CTRL_PRESSED) == RIGHT_CTRL_PRESSED
     )
 
     gMouseInfo.shift = bitand(me.dwControlKeyState, SHIFT_PRESSED) == SHIFT_PRESSED
 
     gLastMouseInfo = gMouseInfo
 
-
   proc hasMouseInput(): bool =
     var buffer: array[INPUT_BUFFER_LEN, INPUT_RECORD]
     var numberOfEventsRead: DWORD
     var toRead: int = 0
 
-    discard peekConsoleInputA(getStdHandle(STD_INPUT_HANDLE), buffer.addr,
-                              buffer.len.DWORD, numberOfEventsRead.addr)
+    discard peekConsoleInputA(
+      getStdHandle(STD_INPUT_HANDLE),
+      buffer.addr,
+      buffer.len.DWORD,
+      numberOfEventsRead.addr,
+    )
 
-    if numberOfEventsRead == 0: return false
+    if numberOfEventsRead == 0:
+      return false
 
-    for inputRecord in buffer[0..<numberOfEventsRead.int]:
+    for inputRecord in buffer[0 ..< numberOfEventsRead.int]:
       toRead.inc()
       if inputRecord.EventType == MOUSE_EVENT:
         break
 
-    if toRead == 0: return false
+    if toRead == 0:
+      return false
 
-    discard readConsoleInput(getStdHandle(STD_INPUT_HANDLE), buffer.addr,
-                             toRead.DWORD, numberOfEventsRead.addr)
+    discard readConsoleInput(
+      getStdHandle(STD_INPUT_HANDLE), buffer.addr, toRead.DWORD, numberOfEventsRead.addr
+    )
 
     if buffer[numberOfEventsRead - 1].EventType == MOUSE_EVENT:
       fillGlobalMouseInfo(buffer[numberOfEventsRead - 1])
@@ -960,27 +1018,27 @@ proc `[]`*(tb: TerminalBuffer, x, y: Natural): TerminalChar =
   if x < tb.width and y < tb.height:
     result = tb.buf[tb.width * y + x]
 
-
 proc fill*(tb: var TerminalBuffer, x1, y1, x2, y2: Natural, ch: string = " ") =
   ## Fills a rectangular area with the `ch` character using the current text
   ## attributes. The rectangle is clipped to the extends of the terminal
   ## buffer and the call can never fail.
   if x1 < tb.width and y1 < tb.height:
     let
-      c = TerminalChar(ch: ch.runeAt(0), fg: tb.currFg, bg: tb.currBg,
-                       style: tb.currStyle)
+      c = TerminalChar(
+        ch: ch.runeAt(0), fg: tb.currFg, bg: tb.currBg, style: tb.currStyle
+      )
 
-      xe = min(x2, tb.width-1)
-      ye = min(y2, tb.height-1)
+      xe = min(x2, tb.width - 1)
+      ye = min(y2, tb.height - 1)
 
-    for y in y1..ye:
-      for x in x1..xe:
+    for y in y1 .. ye:
+      for x in x1 .. xe:
         tb[x, y] = c
 
 proc clear*(tb: var TerminalBuffer, ch: string = " ") =
   ## Clears the contents of the terminal buffer with the `ch` character using
   ## the `fgNone` and `bgNone` attributes.
-  tb.fill(0, 0, tb.width-1, tb.height-1, ch)
+  tb.fill(0, 0, tb.width - 1, tb.height - 1, ch)
 
 proc initTerminalBuffer(tb: var TerminalBuffer, width, height: Natural) =
   ## Initializes a new terminal buffer object of a fixed `width` and `height`.
@@ -1006,10 +1064,13 @@ func height*(tb: TerminalBuffer): Natural =
   ## Returns the height of the terminal buffer.
   result = tb.height
 
-
-proc copyFrom*(tb: var TerminalBuffer,
-               src: TerminalBuffer, srcX, srcY, width, height: Natural,
-               destX, destY: Natural; transparency=false) =
+proc copyFrom*(
+    tb: var TerminalBuffer,
+    src: TerminalBuffer,
+    srcX, srcY, width, height: Natural,
+    destX, destY: Natural,
+    transparency = false,
+) =
   ## Copies the contents of the `src` terminal buffer into this one.
   ## A rectangular area of dimension `width` and `height` is copied from
   ## the position `srcX` and `srcY` in the source buffer to the position
@@ -1031,14 +1092,13 @@ proc copyFrom*(tb: var TerminalBuffer,
     w = min(min(srcWidth, destWidth), width)
     h = min(min(srcHeight, destHeight), height)
 
-  for yOffs in 0..<h:
-    for xOffs in 0..<w:
+  for yOffs in 0 ..< h:
+    for xOffs in 0 ..< w:
       let tc = src[xOffs + srcX, yOffs + srcY]
       if (not transparency) or (not tc.ch.isWhiteSpace):
         tb[xOffs + destX, yOffs + destY] = tc
 
-
-proc copyFrom*(tb: var TerminalBuffer, src: TerminalBuffer, transparency=false) =
+proc copyFrom*(tb: var TerminalBuffer, src: TerminalBuffer, transparency = false) =
   ## Copies the full contents of the `src` terminal buffer into this one.
   ##
   ## If the extents of the source buffer is greater than the extents of the
@@ -1074,8 +1134,9 @@ proc setBackgroundColor*(tb: var TerminalBuffer, bg: BackgroundColor) =
   ## Sets the current background color.
   tb.currBg = bg
 
-proc setForegroundColor*(tb: var TerminalBuffer, fg: ForegroundColor,
-                         bright: bool = false) =
+proc setForegroundColor*(
+    tb: var TerminalBuffer, fg: ForegroundColor, bright: bool = false
+) =
   ## Sets the current foreground color and the bright style flag.
   if bright:
     incl(tb.currStyle, styleBright)
@@ -1125,8 +1186,7 @@ proc write*(tb: var TerminalBuffer, x, y: Natural, s: string) =
   ## will be just cropped to the extents of the buffer.
   var currX = x
   for ch in runes(s):
-    var c = TerminalChar(ch: ch, fg: tb.currFg, bg: tb.currBg,
-                         style: tb.currStyle)
+    var c = TerminalChar(ch: ch, fg: tb.currFg, bg: tb.currBg, style: tb.currStyle)
     tb[currX, y] = c
     inc(currX)
   tb.currX = currX
@@ -1180,16 +1240,15 @@ proc displayFull(tb: TerminalBuffer) =
       put buf
       buf = ""
 
-  for y in 0..<tb.height:
+  for y in 0 ..< tb.height:
     setPos(0, y)
-    for x in 0..<tb.width:
-      let c = tb[x,y]
+    for x in 0 ..< tb.width:
+      let c = tb[x, y]
       if c.bg != gCurrBg or c.fg != gCurrFg or c.style != gCurrStyle:
         flushBuf()
         setAttribs(c)
       buf &= $c.ch
     flushBuf()
-
 
 proc displayDiff(tb: TerminalBuffer) =
   var
@@ -1211,12 +1270,12 @@ proc displayDiff(tb: TerminalBuffer) =
       inc(currXPos, buf.runeLen)
       buf = ""
 
-  for y in 0..<tb.height:
+  for y in 0 ..< tb.height:
     bufXPos = 0
     bufYPos = y
-    for x in 0..<tb.width:
-      let c = tb[x,y]
-      if c != gPrevTerminalBuffer[x,y] or c.forceWrite:
+    for x in 0 ..< tb.width:
+      let c = tb[x, y]
+      if c != gPrevTerminalBuffer[x, y] or c.forceWrite:
         if c.bg != gCurrBg or c.fg != gCurrFg or c.style != gCurrStyle:
           flushBuf()
           bufXPos = x
@@ -1224,9 +1283,8 @@ proc displayDiff(tb: TerminalBuffer) =
         buf &= $c.ch
       else:
         flushBuf()
-        bufXPos = x+1
+        bufXPos = x + 1
     flushBuf()
-
 
 var gDoubleBufferingEnabled = true
 
@@ -1253,7 +1311,7 @@ proc display*(tb: TerminalBuffer) =
       gPrevTerminalBuffer = newTerminalBufferFrom(tb)
     else:
       if tb.width == gPrevTerminalBuffer.width and
-         tb.height == gPrevTerminalBuffer.height:
+          tb.height == gPrevTerminalBuffer.height:
         displayDiff(tb)
         gPrevTerminalBuffer.copyFrom(tb)
       else:
@@ -1268,92 +1326,93 @@ proc display*(tb: TerminalBuffer) =
 type BoxChar = int
 
 const
-  LEFT   = 0x01
-  RIGHT  = 0x02
-  UP     = 0x04
-  DOWN   = 0x08
-  H_DBL  = 0x10
-  V_DBL  = 0x20
+  LEFT = 0x01
+  RIGHT = 0x02
+  UP = 0x04
+  DOWN = 0x08
+  H_DBL = 0x10
+  V_DBL = 0x20
 
   HORIZ = LEFT or RIGHT
-  VERT  = UP or DOWN
+  VERT = UP or DOWN
 
 const gBoxCharsUnicode: array[64, string] = block:
   var boxchars: array[64, string]
 
   boxchars[0] = " "
 
-  boxchars[   0 or  0 or     0 or    0] = " "
-  boxchars[   0 or  0 or     0 or LEFT] = "─"
-  boxchars[   0 or  0 or RIGHT or    0] = "─"
-  boxchars[   0 or  0 or RIGHT or LEFT] = "─"
-  boxchars[   0 or UP or     0 or    0] = "│"
-  boxchars[   0 or UP or     0 or LEFT] = "┘"
-  boxchars[   0 or UP or RIGHT or    0] = "└"
-  boxchars[   0 or UP or RIGHT or LEFT] = "┴"
-  boxchars[DOWN or  0 or     0 or    0] = "│"
-  boxchars[DOWN or  0 or     0 or LEFT] = "┐"
-  boxchars[DOWN or  0 or RIGHT or    0] = "┌"
-  boxchars[DOWN or  0 or RIGHT or LEFT] = "┬"
-  boxchars[DOWN or UP or     0 or    0] = "│"
-  boxchars[DOWN or UP or     0 or LEFT] = "┤"
-  boxchars[DOWN or UP or RIGHT or    0] = "├"
+  boxchars[0 or 0 or 0 or 0] = " "
+  boxchars[0 or 0 or 0 or LEFT] = "─"
+  boxchars[0 or 0 or RIGHT or 0] = "─"
+  boxchars[0 or 0 or RIGHT or LEFT] = "─"
+  boxchars[0 or UP or 0 or 0] = "│"
+  boxchars[0 or UP or 0 or LEFT] = "┘"
+  boxchars[0 or UP or RIGHT or 0] = "└"
+  boxchars[0 or UP or RIGHT or LEFT] = "┴"
+  boxchars[DOWN or 0 or 0 or 0] = "│"
+  boxchars[DOWN or 0 or 0 or LEFT] = "┐"
+  boxchars[DOWN or 0 or RIGHT or 0] = "┌"
+  boxchars[DOWN or 0 or RIGHT or LEFT] = "┬"
+  boxchars[DOWN or UP or 0 or 0] = "│"
+  boxchars[DOWN or UP or 0 or LEFT] = "┤"
+  boxchars[DOWN or UP or RIGHT or 0] = "├"
   boxchars[DOWN or UP or RIGHT or LEFT] = "┼"
 
-  boxchars[H_DBL or    0 or  0 or     0 or    0] = " "
-  boxchars[H_DBL or    0 or  0 or     0 or LEFT] = "═"
-  boxchars[H_DBL or    0 or  0 or RIGHT or    0] = "═"
-  boxchars[H_DBL or    0 or  0 or RIGHT or LEFT] = "═"
-  boxchars[H_DBL or    0 or UP or     0 or    0] = "│"
-  boxchars[H_DBL or    0 or UP or     0 or LEFT] = "╛"
-  boxchars[H_DBL or    0 or UP or RIGHT or    0] = "╘"
-  boxchars[H_DBL or    0 or UP or RIGHT or LEFT] = "╧"
-  boxchars[H_DBL or DOWN or  0 or     0 or    0] = "│"
-  boxchars[H_DBL or DOWN or  0 or     0 or LEFT] = "╕"
-  boxchars[H_DBL or DOWN or  0 or RIGHT or    0] = "╒"
-  boxchars[H_DBL or DOWN or  0 or RIGHT or LEFT] = "╤"
-  boxchars[H_DBL or DOWN or UP or     0 or    0] = "│"
-  boxchars[H_DBL or DOWN or UP or     0 or LEFT] = "╡"
-  boxchars[H_DBL or DOWN or UP or RIGHT or    0] = "╞"
+  boxchars[H_DBL or 0 or 0 or 0 or 0] = " "
+  boxchars[H_DBL or 0 or 0 or 0 or LEFT] = "═"
+  boxchars[H_DBL or 0 or 0 or RIGHT or 0] = "═"
+  boxchars[H_DBL or 0 or 0 or RIGHT or LEFT] = "═"
+  boxchars[H_DBL or 0 or UP or 0 or 0] = "│"
+  boxchars[H_DBL or 0 or UP or 0 or LEFT] = "╛"
+  boxchars[H_DBL or 0 or UP or RIGHT or 0] = "╘"
+  boxchars[H_DBL or 0 or UP or RIGHT or LEFT] = "╧"
+  boxchars[H_DBL or DOWN or 0 or 0 or 0] = "│"
+  boxchars[H_DBL or DOWN or 0 or 0 or LEFT] = "╕"
+  boxchars[H_DBL or DOWN or 0 or RIGHT or 0] = "╒"
+  boxchars[H_DBL or DOWN or 0 or RIGHT or LEFT] = "╤"
+  boxchars[H_DBL or DOWN or UP or 0 or 0] = "│"
+  boxchars[H_DBL or DOWN or UP or 0 or LEFT] = "╡"
+  boxchars[H_DBL or DOWN or UP or RIGHT or 0] = "╞"
   boxchars[H_DBL or DOWN or UP or RIGHT or LEFT] = "╪"
 
-  boxchars[V_DBL or    0 or  0 or     0 or    0] = " "
-  boxchars[V_DBL or    0 or  0 or     0 or LEFT] = "─"
-  boxchars[V_DBL or    0 or  0 or RIGHT or    0] = "─"
-  boxchars[V_DBL or    0 or  0 or RIGHT or LEFT] = "─"
-  boxchars[V_DBL or    0 or UP or     0 or    0] = "║"
-  boxchars[V_DBL or    0 or UP or     0 or LEFT] = "╜"
-  boxchars[V_DBL or    0 or UP or RIGHT or    0] = "╙"
-  boxchars[V_DBL or    0 or UP or RIGHT or LEFT] = "╨"
-  boxchars[V_DBL or DOWN or  0 or     0 or    0] = "║"
-  boxchars[V_DBL or DOWN or  0 or     0 or LEFT] = "╖"
-  boxchars[V_DBL or DOWN or  0 or RIGHT or    0] = "╓"
-  boxchars[V_DBL or DOWN or  0 or RIGHT or LEFT] = "╥"
-  boxchars[V_DBL or DOWN or UP or     0 or    0] = "║"
-  boxchars[V_DBL or DOWN or UP or     0 or LEFT] = "╢"
-  boxchars[V_DBL or DOWN or UP or RIGHT or    0] = "╟"
+  boxchars[V_DBL or 0 or 0 or 0 or 0] = " "
+  boxchars[V_DBL or 0 or 0 or 0 or LEFT] = "─"
+  boxchars[V_DBL or 0 or 0 or RIGHT or 0] = "─"
+  boxchars[V_DBL or 0 or 0 or RIGHT or LEFT] = "─"
+  boxchars[V_DBL or 0 or UP or 0 or 0] = "║"
+  boxchars[V_DBL or 0 or UP or 0 or LEFT] = "╜"
+  boxchars[V_DBL or 0 or UP or RIGHT or 0] = "╙"
+  boxchars[V_DBL or 0 or UP or RIGHT or LEFT] = "╨"
+  boxchars[V_DBL or DOWN or 0 or 0 or 0] = "║"
+  boxchars[V_DBL or DOWN or 0 or 0 or LEFT] = "╖"
+  boxchars[V_DBL or DOWN or 0 or RIGHT or 0] = "╓"
+  boxchars[V_DBL or DOWN or 0 or RIGHT or LEFT] = "╥"
+  boxchars[V_DBL or DOWN or UP or 0 or 0] = "║"
+  boxchars[V_DBL or DOWN or UP or 0 or LEFT] = "╢"
+  boxchars[V_DBL or DOWN or UP or RIGHT or 0] = "╟"
   boxchars[V_DBL or DOWN or UP or RIGHT or LEFT] = "╫"
 
-  boxchars[H_DBL or V_DBL or    0 or  0 or     0 or    0] = " "
-  boxchars[H_DBL or V_DBL or    0 or  0 or     0 or LEFT] = "═"
-  boxchars[H_DBL or V_DBL or    0 or  0 or RIGHT or    0] = "═"
-  boxchars[H_DBL or V_DBL or    0 or  0 or RIGHT or LEFT] = "═"
-  boxchars[H_DBL or V_DBL or    0 or UP or     0 or    0] = "║"
-  boxchars[H_DBL or V_DBL or    0 or UP or     0 or LEFT] = "╝"
-  boxchars[H_DBL or V_DBL or    0 or UP or RIGHT or    0] = "╚"
-  boxchars[H_DBL or V_DBL or    0 or UP or RIGHT or LEFT] = "╩"
-  boxchars[H_DBL or V_DBL or DOWN or  0 or     0 or    0] = "║"
-  boxchars[H_DBL or V_DBL or DOWN or  0 or     0 or LEFT] = "╗"
-  boxchars[H_DBL or V_DBL or DOWN or  0 or RIGHT or    0] = "╔"
-  boxchars[H_DBL or V_DBL or DOWN or  0 or RIGHT or LEFT] = "╦"
-  boxchars[H_DBL or V_DBL or DOWN or UP or     0 or    0] = "║"
-  boxchars[H_DBL or V_DBL or DOWN or UP or     0 or LEFT] = "╣"
-  boxchars[H_DBL or V_DBL or DOWN or UP or RIGHT or    0] = "╠"
+  boxchars[H_DBL or V_DBL or 0 or 0 or 0 or 0] = " "
+  boxchars[H_DBL or V_DBL or 0 or 0 or 0 or LEFT] = "═"
+  boxchars[H_DBL or V_DBL or 0 or 0 or RIGHT or 0] = "═"
+  boxchars[H_DBL or V_DBL or 0 or 0 or RIGHT or LEFT] = "═"
+  boxchars[H_DBL or V_DBL or 0 or UP or 0 or 0] = "║"
+  boxchars[H_DBL or V_DBL or 0 or UP or 0 or LEFT] = "╝"
+  boxchars[H_DBL or V_DBL or 0 or UP or RIGHT or 0] = "╚"
+  boxchars[H_DBL or V_DBL or 0 or UP or RIGHT or LEFT] = "╩"
+  boxchars[H_DBL or V_DBL or DOWN or 0 or 0 or 0] = "║"
+  boxchars[H_DBL or V_DBL or DOWN or 0 or 0 or LEFT] = "╗"
+  boxchars[H_DBL or V_DBL or DOWN or 0 or RIGHT or 0] = "╔"
+  boxchars[H_DBL or V_DBL or DOWN or 0 or RIGHT or LEFT] = "╦"
+  boxchars[H_DBL or V_DBL or DOWN or UP or 0 or 0] = "║"
+  boxchars[H_DBL or V_DBL or DOWN or UP or 0 or LEFT] = "╣"
+  boxchars[H_DBL or V_DBL or DOWN or UP or RIGHT or 0] = "╠"
   boxchars[H_DBL or V_DBL or DOWN or UP or RIGHT or LEFT] = "╬"
 
   boxchars
 
-proc toUTF8String(c: BoxChar): string = gBoxCharsUnicode[c]
+proc toUTF8String(c: BoxChar): string =
+  gBoxCharsUnicode[c]
 
 type BoxBuffer* = ref object
   ## Box buffers are used to store the results of multiple consecutive box
@@ -1388,9 +1447,12 @@ func `[]`(bb: BoxBuffer, x, y: Natural): BoxChar =
   if x < bb.width and y < bb.height:
     result = bb.buf[bb.width * y + x]
 
-proc copyFrom*(bb: var BoxBuffer,
-               src: BoxBuffer, srcX, srcY, width, height: Natural,
-               destX, destY: Natural) =
+proc copyFrom*(
+    bb: var BoxBuffer,
+    src: BoxBuffer,
+    srcX, srcY, width, height: Natural,
+    destX, destY: Natural,
+) =
   ## Copies the contents of the `src` box buffer into this one.
   ## A rectangular area of dimension `width` and `height` is copied from
   ## the position `srcX` and `srcY` in the source buffer to the position
@@ -1408,10 +1470,9 @@ proc copyFrom*(bb: var BoxBuffer,
     w = min(min(srcWidth, destWidth), width)
     h = min(min(srcHeight, destHeight), height)
 
-  for yOffs in 0..<h:
-    for xOffs in 0..<w:
+  for yOffs in 0 ..< h:
+    for xOffs in 0 ..< w:
       bb[xOffs + destX, yOffs + destY] = src[xOffs + srcX, yOffs + srcY]
-
 
 proc copyFrom*(bb: var BoxBuffer, src: BoxBuffer) =
   ## Copies the full contents of the `src` box buffer into this one.
@@ -1427,21 +1488,28 @@ proc newBoxBufferFrom*(src: BoxBuffer): BoxBuffer =
   bb.copyFrom(src)
   result = bb
 
-proc drawHorizLine*(bb: var BoxBuffer, x1, x2, y: Natural,
-                    doubleStyle: bool = false, connect: bool = true) =
+proc drawHorizLine*(
+    bb: var BoxBuffer,
+    x1, x2, y: Natural,
+    doubleStyle: bool = false,
+    connect: bool = true,
+) =
   ## Draws a horizontal line into the box buffer. Set `doubleStyle` to `true`
   ## to draw double lines. Set `connect` to `true` to connect overlapping
   ## lines.
-  if y >= bb.height: return
+  if y >= bb.height:
+    return
   var xStart = x1
   var xEnd = x2
-  if xStart > xEnd: swap(xStart, xEnd)
-  if xStart >= bb.width: return
+  if xStart > xEnd:
+    swap(xStart, xEnd)
+  if xStart >= bb.width:
+    return
 
-  xEnd = min(xEnd, bb.width-1)
+  xEnd = min(xEnd, bb.width - 1)
   if connect:
-    for x in xStart..xEnd:
-      var c = bb[x,y]
+    for x in xStart .. xEnd:
+      var c = bb[x, y]
       var h: int
       if x == xStart:
         h = if (c and LEFT) > 0: HORIZ else: RIGHT
@@ -1449,29 +1517,37 @@ proc drawHorizLine*(bb: var BoxBuffer, x1, x2, y: Natural,
         h = if (c and RIGHT) > 0: HORIZ else: LEFT
       else:
         h = HORIZ
-      if doubleStyle: h = h or H_DBL
-      bb[x,y] = c or h
+      if doubleStyle:
+        h = h or H_DBL
+      bb[x, y] = c or h
   else:
-    for x in xStart..xEnd:
+    for x in xStart .. xEnd:
       var h = HORIZ
-      if doubleStyle: h = h or H_DBL
-      bb[x,y] = h
+      if doubleStyle:
+        h = h or H_DBL
+      bb[x, y] = h
 
-
-proc drawVertLine*(bb: var BoxBuffer, x, y1, y2: Natural,
-                   doubleStyle: bool = false, connect: bool = true) =
+proc drawVertLine*(
+    bb: var BoxBuffer,
+    x, y1, y2: Natural,
+    doubleStyle: bool = false,
+    connect: bool = true,
+) =
   ## Draws a vertical line into the box buffer. Set `doubleStyle` to `true` to
   ## draw double lines. Set `connect` to `true` to connect overlapping lines.
-  if x >= bb.width: return
+  if x >= bb.width:
+    return
   var yStart = y1
   var yEnd = y2
-  if yStart > yEnd: swap(yStart, yEnd)
-  if yStart >= bb.height: return
+  if yStart > yEnd:
+    swap(yStart, yEnd)
+  if yStart >= bb.height:
+    return
 
-  yEnd = min(yEnd, bb.height-1)
+  yEnd = min(yEnd, bb.height - 1)
   if connect:
-    for y in yStart..yEnd:
-      var c = bb[x,y]
+    for y in yStart .. yEnd:
+      var c = bb[x, y]
       var v: int
       if y == yStart:
         v = if (c and UP) > 0: VERT else: DOWN
@@ -1479,20 +1555,26 @@ proc drawVertLine*(bb: var BoxBuffer, x, y1, y2: Natural,
         v = if (c and DOWN) > 0: VERT else: UP
       else:
         v = VERT
-      if doubleStyle: v = v or V_DBL
-      bb[x,y] = c or v
+      if doubleStyle:
+        v = v or V_DBL
+      bb[x, y] = c or v
   else:
-    for y in yStart..yEnd:
+    for y in yStart .. yEnd:
       var v = VERT
-      if doubleStyle: v = v or V_DBL
-      bb[x,y] = v
+      if doubleStyle:
+        v = v or V_DBL
+      bb[x, y] = v
 
-
-proc drawRect*(bb: var BoxBuffer, x1, y1, x2, y2: Natural,
-               doubleStyle: bool = false, connect: bool = true) =
+proc drawRect*(
+    bb: var BoxBuffer,
+    x1, y1, x2, y2: Natural,
+    doubleStyle: bool = false,
+    connect: bool = true,
+) =
   ## Draws a rectangle into the box buffer. Set `doubleStyle` to `true` to
   ## draw double lines. Set `connect` to `true` to connect overlapping lines.
-  if abs(x1-x2) < 1 or abs(y1-y2) < 1: return
+  if abs(x1 - x2) < 1 or abs(y1 - y2) < 1:
+    return
 
   if connect:
     bb.drawHorizLine(x1, x2, y1, doubleStyle)
@@ -1500,27 +1582,30 @@ proc drawRect*(bb: var BoxBuffer, x1, y1, x2, y2: Natural,
     bb.drawVertLine(x1, y1, y2, doubleStyle)
     bb.drawVertLine(x2, y1, y2, doubleStyle)
   else:
-    bb.drawHorizLine(x1+1, x2-1, y1, doubleStyle, connect = false)
-    bb.drawHorizLine(x1+1, x2-1, y2, doubleStyle, connect = false)
-    bb.drawVertLine(x1, y1+1, y2-1, doubleStyle, connect = false)
-    bb.drawVertLine(x2, y1+1, y2-1, doubleStyle, connect = false)
+    bb.drawHorizLine(x1 + 1, x2 - 1, y1, doubleStyle, connect = false)
+    bb.drawHorizLine(x1 + 1, x2 - 1, y2, doubleStyle, connect = false)
+    bb.drawVertLine(x1, y1 + 1, y2 - 1, doubleStyle, connect = false)
+    bb.drawVertLine(x2, y1 + 1, y2 - 1, doubleStyle, connect = false)
 
     var c = RIGHT or DOWN
-    if doubleStyle: c = c or V_DBL or H_DBL
-    bb[x1,y1] = c
+    if doubleStyle:
+      c = c or V_DBL or H_DBL
+    bb[x1, y1] = c
 
     c = LEFT or DOWN
-    if doubleStyle: c = c or V_DBL or H_DBL
-    bb[x2,y1] = c
+    if doubleStyle:
+      c = c or V_DBL or H_DBL
+    bb[x2, y1] = c
 
     c = RIGHT or UP
-    if doubleStyle: c = c or V_DBL or H_DBL
-    bb[x1,y2] = c
+    if doubleStyle:
+      c = c or V_DBL or H_DBL
+    bb[x1, y2] = c
 
     c = LEFT or UP
-    if doubleStyle: c = c or V_DBL or H_DBL
-    bb[x2,y2] = c
-
+    if doubleStyle:
+      c = c or V_DBL or H_DBL
+    bb[x2, y2] = c
 
 proc write*(tb: var TerminalBuffer, bb: var BoxBuffer) =
   ## Writes the contents of the box buffer into this terminal buffer with
@@ -1530,17 +1615,17 @@ proc write*(tb: var TerminalBuffer, bb: var BoxBuffer) =
   var horizBoxCharCount: int
   var forceWrite: bool
 
-  for y in 0..<height:
+  for y in 0 ..< height:
     horizBoxCharCount = 0
     forceWrite = false
-    for x in 0..<width:
-      let boxChar = bb[x,y]
+    for x in 0 ..< width:
+      let boxChar = bb[x, y]
       if boxChar > 0:
         if ((boxChar and LEFT) or (boxChar and RIGHT)) > 0:
           if horizBoxCharCount == 1:
-            var prev = tb[x-1,y]
+            var prev = tb[x - 1, y]
             prev.forceWrite = true
-            tb[x-1,y] = prev
+            tb[x - 1, y] = prev
           if horizBoxCharCount >= 1:
             forceWrite = true
           inc(horizBoxCharCount)
@@ -1548,15 +1633,17 @@ proc write*(tb: var TerminalBuffer, bb: var BoxBuffer) =
           horizBoxCharCount = 0
           forceWrite = false
 
-        var c = TerminalChar(ch: toUTF8String(boxChar).runeAt(0),
-                             fg: tb.currFg, bg: tb.currBg,
-                             style: tb.currStyle, forceWrite: forceWrite)
-        tb[x,y] = c
+        var c = TerminalChar(
+          ch: toUTF8String(boxChar).runeAt(0),
+          fg: tb.currFg,
+          bg: tb.currBg,
+          style: tb.currStyle,
+          forceWrite: forceWrite,
+        )
+        tb[x, y] = c
 
-
-type
-  TerminalCmd* = enum  ## commands that can be expressed as arguments
-    resetStyle         ## reset attributes
+type TerminalCmd* = enum ## commands that can be expressed as arguments
+  resetStyle ## reset attributes
 
 template writeProcessArg(tb: var TerminalBuffer, s: string) =
   tb.write(s)
@@ -1620,40 +1707,39 @@ macro write*(tb: var TerminalBuffer, args: varargs[typed]): untyped =
   ##
   result = newNimNode(nnkStmtList)
 
-  if args.len >= 3 and
-     args[0].typeKind() == ntyInt and args[1].typeKind() == ntyInt:
-
+  if args.len >= 3 and args[0].typeKind() == ntyInt and args[1].typeKind() == ntyInt:
     let x = args[0]
     let y = args[1]
     result.add(newCall(bindSym"setCursorPos", tb, x, y))
-    for i in 2..<args.len:
+    for i in 2 ..< args.len:
       let item = args[i]
       result.add(newCall(bindSym"writeProcessArg", tb, item))
   else:
     for item in args.items:
       result.add(newCall(bindSym"writeProcessArg", tb, item))
 
-
-proc drawHorizLine*(tb: var TerminalBuffer, x1, x2, y: Natural,
-                    doubleStyle: bool = false) =
+proc drawHorizLine*(
+    tb: var TerminalBuffer, x1, x2, y: Natural, doubleStyle: bool = false
+) =
   ## Convenience method to draw a single horizontal line into a terminal
   ## buffer directly.
   var bb = newBoxBuffer(tb.width, tb.height)
   bb.drawHorizLine(x1, x2, y, doubleStyle)
   tb.write(bb)
 
-proc drawVertLine*(tb: var TerminalBuffer, x, y1, y2: Natural,
-                   doubleStyle: bool = false) =
+proc drawVertLine*(
+    tb: var TerminalBuffer, x, y1, y2: Natural, doubleStyle: bool = false
+) =
   ## Convenience method to draw a single vertical line into a terminal buffer
   ## directly.
   var bb = newBoxBuffer(tb.width, tb.height)
   bb.drawVertLine(x, y1, y2, doubleStyle)
   tb.write(bb)
 
-proc drawRect*(tb: var TerminalBuffer, x1, y1, x2, y2: Natural,
-               doubleStyle: bool = false) =
+proc drawRect*(
+    tb: var TerminalBuffer, x1, y1, x2, y2: Natural, doubleStyle: bool = false
+) =
   ## Convenience method to draw a rectangle into a terminal buffer directly.
   var bb = newBoxBuffer(tb.width, tb.height)
   bb.drawRect(x1, y1, x2, y2, doubleStyle)
   tb.write(bb)
-
