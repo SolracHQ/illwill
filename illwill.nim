@@ -910,6 +910,10 @@ when defined(windows):
     else:
       return false
 
+var gCheckMouseFirst = false
+  ## Variable to toggle whether to check for mouse input before keyboard input in `getKey()`. This is a hack to avoid getKeyAsync() starving mouse events on Windows
+  ## Unfortunally I didn't find a better way to do this.
+
 proc getKey*(): Key =
   ## Reads the next keystroke in a non-blocking manner. If there are no
   ## keypress events in the buffer, `Key.None` is returned.
@@ -919,11 +923,14 @@ proc getKey*(): Key =
   ##
   ## If the module is not intialised, `IllwillError` is raised.
   checkInit()
-  result = getKeyAsync(0)
+
   when defined(windows):
-    if result == Key.None:
-      if hasMouseInput():
-        return Key.Mouse
+    if gCheckMouseFirst and hasMouseInput():
+      return Key.Mouse
+    result = getKeyAsync(0)
+    gCheckMouseFirst = not gCheckMouseFirst
+  else:
+    result = getKeyAsync(0)
 
 proc getKeyWithTimeout*(ms = 1000): Key =
   ## Reads the next keystroke with a timeout. If there were no keypress events
@@ -934,11 +941,13 @@ proc getKeyWithTimeout*(ms = 1000): Key =
   ##
   ## If the module is not intialised, `IllwillError` is raised.
   checkInit()
-  result = getKeyAsync(ms)
   when defined(windows):
-    if result == Key.None:
-      if hasMouseInput():
-        return Key.Mouse
+    if gCheckMouseFirst and hasMouseInput():
+      return Key.Mouse
+    result = getKeyAsync(ms)
+    gCheckMouseFirst = not gCheckMouseFirst
+  else:
+    result = getKeyAsync(ms)
 
 type
   TerminalChar* = object
