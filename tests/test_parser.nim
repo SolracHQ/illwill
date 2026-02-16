@@ -1,19 +1,17 @@
 import unittest
 
 when not defined(windows):
-
-  type
-    MockStdin = ref object
-      buf: string
-      off = 0
+  type MockStdin = ref object
+    buf: string
+    off = 0
 
   proc kbhit(mock: MockStdin): cint =
     return cint(mock.off <= mock.buf.high)
 
-  proc read(mock: MockStdin, p: ptr char, sz: int): int =
+  proc read[T](mock: MockStdin, p: ptr T, sz: int): int =
     assert sz == 1
     if mock.off <= mock.buf.high:
-      p[] = mock.buf[mock.off]
+      p[] = mock.buf[mock.off].T
       inc mock.off
       return sz
     else:
@@ -21,33 +19,30 @@ when not defined(windows):
 
   include illwill
 
-  const
-    keySequences = {
-      ord(Key.Up):        @["\eOA", "\e[A"],
-      ord(Key.Down):      @["\eOB", "\e[B"],
-      ord(Key.Right):     @["\eOC", "\e[C"],
-      ord(Key.Left):      @["\eOD", "\e[D"],
-
-      ord(Key.Home):      @["\e[1~", "\e[7~", "\eOH", "\e[H"],
-      ord(Key.Insert):    @["\e[2~"],
-      ord(Key.Delete):    @["\e[3~"],
-      ord(Key.End):       @["\e[4~", "\e[8~", "\eOF", "\e[F"],
-      ord(Key.PageUp):    @["\e[5~"],
-      ord(Key.PageDown):  @["\e[6~"],
-
-      ord(Key.F1):        @["\e[11~", "\eOP"],
-      ord(Key.F2):        @["\e[12~", "\eOQ"],
-      ord(Key.F3):        @["\e[13~", "\eOR"],
-      ord(Key.F4):        @["\e[14~", "\eOS"],
-      ord(Key.F5):        @["\e[15~"],
-      ord(Key.F6):        @["\e[17~"],
-      ord(Key.F7):        @["\e[18~"],
-      ord(Key.F8):        @["\e[19~"],
-      ord(Key.F9):        @["\e[20~"],
-      ord(Key.F10):       @["\e[21~"],
-      ord(Key.F11):       @["\e[23~"],
-      ord(Key.F12):       @["\e[24~"],
-    }
+  const keySequences = {
+    ord(Key.Up): @["\eOA", "\e[A"],
+    ord(Key.Down): @["\eOB", "\e[B"],
+    ord(Key.Right): @["\eOC", "\e[C"],
+    ord(Key.Left): @["\eOD", "\e[D"],
+    ord(Key.Home): @["\e[1~", "\e[7~", "\eOH", "\e[H"],
+    ord(Key.Insert): @["\e[2~"],
+    ord(Key.Delete): @["\e[3~"],
+    ord(Key.End): @["\e[4~", "\e[8~", "\eOF", "\e[F"],
+    ord(Key.PageUp): @["\e[5~"],
+    ord(Key.PageDown): @["\e[6~"],
+    ord(Key.F1): @["\e[11~", "\eOP"],
+    ord(Key.F2): @["\e[12~", "\eOQ"],
+    ord(Key.F3): @["\e[13~", "\eOR"],
+    ord(Key.F4): @["\e[14~", "\eOS"],
+    ord(Key.F5): @["\e[15~"],
+    ord(Key.F6): @["\e[17~"],
+    ord(Key.F7): @["\e[18~"],
+    ord(Key.F8): @["\e[19~"],
+    ord(Key.F9): @["\e[20~"],
+    ord(Key.F10): @["\e[21~"],
+    ord(Key.F11): @["\e[23~"],
+    ord(Key.F12): @["\e[24~"],
+  }
 
   test "special keys":
     check parseStdin(MockStdin(buf: "\e")) == Key.Escape
