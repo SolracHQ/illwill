@@ -638,37 +638,37 @@ else:  # OS X & Linux
   const KeySequenceMaxLen = 100
 
   # global keycode buffer
-  var keyBuf {.threadvar.}: array[KeySequenceMaxLen, int]
+  var keyBuf {.threadvar.}: array[KeySequenceMaxLen, char]
 
-  proc splitInputs(inp: openarray[int], max: Natural): seq[seq[int]] =
+  proc splitInputs(inp: openarray[char], max: Natural): seq[seq[char]] =
     ## splits the input buffer to extract mouse coordinates
-    var parts: seq[seq[int]] = @[]
-    var cur: seq[int] = @[]
+    var parts: seq[seq[char]] = @[]
+    var cur: seq[char] = @[]
     for ch in inp[CSI.len+1 .. max-1]:
-      if ch == ord('M'):
+      if ch == 'M':
         # Button press
         parts.add(cur)
         gMouseInfo.action = mbaPressed
         break
-      elif ch == ord('m'):
+      elif ch == 'm':
         # Button release
         parts.add(cur)
         gMouseInfo.action = mbaReleased
         break
-      elif ch != ord(';'):
+      elif ch != ';':
         cur.add(ch)
       else:
         parts.add(cur)
         cur = @[]
     return parts
 
-  proc getPos(inp: seq[int]): int =
+  proc getPos(inp: seq[char]): int =
     var str = ""
     for ch in inp:
-      str &= $(ch.chr)
+      str &= $ch
     result = parseInt(str)
 
-  proc fillGlobalMouseInfo(keyBuf: array[KeySequenceMaxLen, int]) =
+  proc fillGlobalMouseInfo(keyBuf: openArray[char]) =
     let parts = splitInputs(keyBuf, keyBuf.len)
     gMouseInfo.x = parts[1].getPos() - 1
     gMouseInfo.y = parts[2].getPos() - 1
@@ -698,34 +698,41 @@ else:  # OS X & Linux
       gMouseInfo.scrollDir = ScrollDirection.sdNone
 
   proc parseStdin[T](input: T): Key =
-    var ch1, ch2, ch3, ch4, ch5: char
     result = Key.None
-    if read(input, ch1.addr, 1) > 0:
-      case ch1
+    if read(input, keyBuf[0].addr, 1) > 0:
+      case keyBuf[0]
       of '\e':
-        if read(input, ch2.addr, 1) > 0:
-          if ch2 == 'O' and read(input, ch3.addr, 1) > 0:
-            if ch3 in "ABCDFH":
-              result = KEYS_D[int(ch3) - int('A')]
-            elif ch3 in "PQRS":
-              result = KEYS_F[int(ch3) - int('P')]
-          elif ch2 == '[' and read(input, ch3.addr, 1) > 0:
-            if ch3 in "ABCDFH":
-              result = KEYS_D[int(ch3) - int('A')]
-            elif ch3 in "PQRS":
-              result = KEYS_F[int(ch3) - int('P')]
-            elif ch3 == '1' and read(input, ch4.addr, 1) > 0:
-              if ch4 == '~':
+        if read(input, keyBuf[1].addr, 1) > 0:
+          if keyBuf[1] == 'O' and read(input, keyBuf[2].addr, 1) > 0:
+            if keyBuf[2] in "ABCDFH":
+              result = KEYS_D[int(keyBuf[2]) - int('A')]
+            elif keyBuf[2] in "PQRS":
+              result = KEYS_F[int(keyBuf[2]) - int('P')]
+          elif keyBuf[1] == '[' and read(input, keyBuf[2].addr, 1) > 0:
+            if keyBuf[2] == '<':
+              for i in 3 .. KeySequenceMaxLen - 1:
+                if read(input, keyBuf[i].addr, 1) <= 0:
+                  break
+                if keyBuf[i] == 'M' or keyBuf[i] == 'm':
+                  fillGlobalMouseInfo(keyBuf[0 .. i])
+                  result = Key.Mouse
+                  break
+            elif keyBuf[2] in "ABCDFH":
+              result = KEYS_D[int(keyBuf[2]) - int('A')]
+            elif keyBuf[2] in "PQRS":
+              result = KEYS_F[int(keyBuf[2]) - int('P')]
+            elif keyBuf[2] == '1' and read(input, keyBuf[3].addr, 1) > 0:
+              if keyBuf[3] == '~':
                 result = Key.Home
-              elif ch4 in "12345789" and read(input, ch5.addr, 1) > 0 and ch5 == '~':
-                result = KEYS_F[int(ch4) - int('1')]
-            elif ch3 == '2' and read(input, ch4.addr, 1) > 0:
-              if ch4 == '~':
+              elif keyBuf[3] in "12345789" and read(input, keyBuf[4].addr, 1) > 0 and keyBuf[4] == '~':
+                result = KEYS_F[int(keyBuf[3]) - int('1')]
+            elif keyBuf[2] == '2' and read(input, keyBuf[3].addr, 1) > 0:
+              if keyBuf[3] == '~':
                 result = Key.Insert
-              elif ch4 in "0134" and read(input, ch5.addr, 1) > 0 and ch5 == '~':
-                result = KEYS_G[int(ch4) - int('0')]
-            elif ch3 in "345678" and read(input, ch4.addr, 1) > 0 and ch4 == '~':
-              result = KEYS_E[int(ch3) - int('3')]
+              elif keyBuf[3] in "0134" and read(input, keyBuf[4].addr, 1) > 0 and keyBuf[4] == '~':
+                result = KEYS_G[int(keyBuf[3]) - int('0')]
+            elif keyBuf[2] in "345678" and read(input, keyBuf[3].addr, 1) > 0 and keyBuf[3] == '~':
+              result = KEYS_E[int(keyBuf[2]) - int('3')]
             else:
               discard   # if cannot parse full seq it is discarded
           else:
@@ -737,7 +744,7 @@ else:  # OS X & Linux
       of '\b':
         result = Key.Backspace
       else:
-        result = toKey(int(ch1))
+        result = toKey(int(keyBuf[0]))
 
   proc getKeyAsync(ms: int): Key =
     result = Key.None
