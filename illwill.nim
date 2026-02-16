@@ -319,7 +319,6 @@ when defined(windows):
     ENABLE_WINDOW_INPUT = 0x8
     ENABLE_QUICK_EDIT_MODE = 0x40
     ENABLE_EXTENDED_FLAGS = 0x80
-    MOUSE_EVENT = 0x0002
 
   const
     FROM_LEFT_1ST_BUTTON_PRESSED = 0x0001
@@ -346,6 +345,14 @@ when defined(windows):
     KEY_EVENT_RECORD_UNION* {.bycopy, union.} = object
       UnicodeChar*: WCHAR
       AsciiChar*: CHAR
+
+    KEY_EVENT_RECORD* {.bycopy.} = object
+      bKeyDown*: BOOL
+      wRepeatCount*: WORD
+      wVirtualKeyCode*: WORD
+      wVirtualScanCode*: WORD
+      uChar*: KEY_EVENT_RECORD_UNION
+      dwControlKeyState*: DWORD
 
     INPUT_RECORD_UNION* {.bycopy, union.} = object
       KeyEvent*: KEY_EVENT_RECORD
@@ -379,6 +386,10 @@ when defined(windows):
       EventType*: WORD
       Event*: INPUT_RECORD_UNION
 
+  const
+    KEY_EVENT = 0x0001
+    MOUSE_EVENT = 0x0002
+
   type
     PINPUT_RECORD = ptr array[INPUT_BUFFER_LEN, INPUT_RECORD]
     LPDWORD = PDWORD
@@ -408,87 +419,141 @@ when defined(windows):
     if gOldConsoleMode != 0:
       discard setConsoleMode(getStdHandle(STD_OUTPUT_HANDLE), gOldConsoleMode)
 
-  proc getchTimeout(ms: int32): KEY_EVENT_RECORD =
-    let fd = getStdHandle(STD_INPUT_HANDLE)
-    var keyEvent = KEY_EVENT_RECORD()
-    var numRead: cint
-    while true:
-      case waitForSingleObject(fd, ms)
-      of WAIT_TIMEOUT:
-        keyEvent.eventType = -1
-        return
-      of WAIT_OBJECT_0:
-        doAssert(readConsoleInput(fd, addr(keyEvent), 1, addr(numRead)) != 0)
-        if numRead == 0 or keyEvent.eventType != 1 or keyEvent.bKeyDown == 0:
-          continue
-        return keyEvent
+  template alias(newName: untyped, call: untyped) =
+    template newName(): untyped =
+      call
+
+  var gLastMouseInfo = MouseInfo()
+
+  proc fillGlobalMouseInfo(inputRecord: INPUT_RECORD) =
+    alias(me, inputRecord.Event.MouseEvent)
+
+    gMouseInfo.x = me.dwMousePosition.X
+    gMouseInfo.y = me.dwMousePosition.Y
+
+    case me.dwButtonState
+    of FROM_LEFT_1ST_BUTTON_PRESSED:
+      gMouseInfo.button = mbLeft
+    of FROM_LEFT_2ND_BUTTON_PRESSED:
+      gMouseInfo.button = mbMiddle
+    of RIGHTMOST_BUTTON_PRESSED:
+      gMouseInfo.button = mbRight
+    else:
+      gMouseInfo.button = mbNone
+
+    if gMouseInfo.button != mbNone:
+      gMouseInfo.action = MouseButtonAction.mbaPressed
+    elif gMouseInfo.button == mbNone and gLastMouseInfo.button != mbNone:
+      gMouseInfo.action = MouseButtonAction.mbaReleased
+    else:
+      gMouseInfo.action = MouseButtonAction.mbaNone
+
+    if gLastMouseInfo.x != gMouseInfo.x or gLastMouseInfo.y != gMouseInfo.y:
+      gMouseInfo.move = true
+    else:
+      gMouseInfo.move = false
+
+    if bitand(me.dwEventFlags, MOUSE_WHEELED) == MOUSE_WHEELED:
+      gMouseInfo.scroll = true
+      if me.dwButtonState.testBit(31):
+        gMouseInfo.scrollDir = ScrollDirection.sdDown
       else:
-        doAssert(false)
+        gMouseInfo.scrollDir = ScrollDirection.sdUp
+    else:
+      gMouseInfo.scroll = false
+      gMouseInfo.scrollDir = ScrollDirection.sdNone
+
+    gMouseInfo.ctrl = (
+      bitand(me.dwControlKeyState, LEFT_CTRL_PRESSED) == LEFT_CTRL_PRESSED or
+      bitand(me.dwControlKeyState, RIGHT_CTRL_PRESSED) == RIGHT_CTRL_PRESSED
+    )
+
+    gMouseInfo.shift = bitand(me.dwControlKeyState, SHIFT_PRESSED) == SHIFT_PRESSED
+
+    gLastMouseInfo = gMouseInfo
 
   proc getKeyAsync(ms: int): Key =
-    let event = getchTimeout(int32(ms))
+    let fd = getStdHandle(STD_INPUT_HANDLE)
+    var buffer: array[1, INPUT_RECORD]
+    var numRead: DWORD
 
-    if event.eventType == -1:
-      return Key.None
-
-    if event.uChar != 0:
-      return toKey((event.uChar))
-    else:
-      case event.wVirtualScanCode
-      of 8:
-        return Key.Backspace
-      of 9:
-        return Key.Tab
-      of 13:
-        return Key.Enter
-      of 32:
-        return Key.Space
-      of 59:
-        return Key.F1
-      of 60:
-        return Key.F2
-      of 61:
-        return Key.F3
-      of 62:
-        return Key.F4
-      of 63:
-        return Key.F5
-      of 64:
-        return Key.F6
-      of 65:
-        return Key.F7
-      of 66:
-        return Key.F8
-      of 67:
-        return Key.F9
-      of 68:
-        return Key.F10
-      of 71:
-        return Key.Home
-      of 72:
-        return Key.Up
-      of 73:
-        return Key.PageUp
-      of 75:
-        return Key.Left
-      of 77:
-        return Key.Right
-      of 79:
-        return Key.End
-      of 80:
-        return Key.Down
-      of 81:
-        return Key.PageDown
-      of 82:
-        return Key.Insert
-      of 83:
-        return Key.Delete
-      of 87:
-        return Key.F11
-      of 88:
-        return Key.F12
-      else:
+    while true:
+      case waitForSingleObject(fd, ms.int32)
+      of WAIT_TIMEOUT:
         return Key.None
+      of WAIT_OBJECT_0:
+        doAssert(readConsoleInput(fd, addr(buffer[0]), 1, addr(numRead)) != 0)
+        if numRead == 0:
+          continue
+
+        let inputRecord = buffer[0]
+
+        if inputRecord.EventType == KEY_EVENT:
+          let keyEvent = inputRecord.Event.KeyEvent
+          if keyEvent.bKeyDown != 0:
+            if keyEvent.uChar.UnicodeChar.ord != 0:
+              return toKey(keyEvent.uChar.UnicodeChar.ord)
+            else:
+              case keyEvent.wVirtualScanCode
+              of 8:
+                return Key.Backspace
+              of 9:
+                return Key.Tab
+              of 13:
+                return Key.Enter
+              of 32:
+                return Key.Space
+              of 59:
+                return Key.F1
+              of 60:
+                return Key.F2
+              of 61:
+                return Key.F3
+              of 62:
+                return Key.F4
+              of 63:
+                return Key.F5
+              of 64:
+                return Key.F6
+              of 65:
+                return Key.F7
+              of 66:
+                return Key.F8
+              of 67:
+                return Key.F9
+              of 68:
+                return Key.F10
+              of 71:
+                return Key.Home
+              of 72:
+                return Key.Up
+              of 73:
+                return Key.PageUp
+              of 75:
+                return Key.Left
+              of 77:
+                return Key.Right
+              of 79:
+                return Key.End
+              of 80:
+                return Key.Down
+              of 81:
+                return Key.PageDown
+              of 82:
+                return Key.Insert
+              of 83:
+                return Key.Delete
+              of 87:
+                return Key.F11
+              of 88:
+                return Key.F12
+              else:
+                return Key.None
+        elif inputRecord.EventType == MOUSE_EVENT and gMouse:
+          fillGlobalMouseInfo(inputRecord)
+          return Key.Mouse
+      else:
+        discard
 
   proc writeConsole(
     hConsoleOutput: HANDLE,
@@ -823,97 +888,6 @@ proc illwillDeinit*() =
   resetAttributes()
   showCursor()
 
-when defined(windows):
-  template alias(newName: untyped, call: untyped) =
-    template newName(): untyped =
-      call
-
-  var gLastMouseInfo = MouseInfo()
-
-  proc fillGlobalMouseInfo(inputRecord: INPUT_RECORD) =
-    alias(me, inputRecord.Event.MouseEvent)
-
-    gMouseInfo.x = me.dwMousePosition.X
-    gMouseInfo.y = me.dwMousePosition.Y
-
-    case me.dwButtonState
-    of FROM_LEFT_1ST_BUTTON_PRESSED:
-      gMouseInfo.button = mbLeft
-    of FROM_LEFT_2ND_BUTTON_PRESSED:
-      gMouseInfo.button = mbMiddle
-    of RIGHTMOST_BUTTON_PRESSED:
-      gMouseInfo.button = mbRight
-    else:
-      gMouseInfo.button = mbNone
-
-    if gMouseInfo.button != mbNone:
-      gMouseInfo.action = MouseButtonAction.mbaPressed
-    elif gMouseInfo.button == mbNone and gLastMouseInfo.button != mbNone:
-      gMouseInfo.action = MouseButtonAction.mbaReleased
-    else:
-      gMouseInfo.action = MouseButtonAction.mbaNone
-
-    if gLastMouseInfo.x != gMouseInfo.x or gLastMouseInfo.y != gMouseInfo.y:
-      gMouseInfo.move = true
-    else:
-      gMouseInfo.move = false
-
-    if bitand(me.dwEventFlags, MOUSE_WHEELED) == MOUSE_WHEELED:
-      gMouseInfo.scroll = true
-      if me.dwButtonState.testBit(31):
-        gMouseInfo.scrollDir = ScrollDirection.sdDown
-      else:
-        gMouseInfo.scrollDir = ScrollDirection.sdUp
-    else:
-      gMouseInfo.scroll = false
-      gMouseInfo.scrollDir = ScrollDirection.sdNone
-
-    gMouseInfo.ctrl = (
-      bitand(me.dwControlKeyState, LEFT_CTRL_PRESSED) == LEFT_CTRL_PRESSED or
-      bitand(me.dwControlKeyState, RIGHT_CTRL_PRESSED) == RIGHT_CTRL_PRESSED
-    )
-
-    gMouseInfo.shift = bitand(me.dwControlKeyState, SHIFT_PRESSED) == SHIFT_PRESSED
-
-    gLastMouseInfo = gMouseInfo
-
-  proc hasMouseInput(): bool =
-    var buffer: array[INPUT_BUFFER_LEN, INPUT_RECORD]
-    var numberOfEventsRead: DWORD
-    var toRead: int = 0
-
-    discard peekConsoleInputA(
-      getStdHandle(STD_INPUT_HANDLE),
-      buffer.addr,
-      buffer.len.DWORD,
-      numberOfEventsRead.addr,
-    )
-
-    if numberOfEventsRead == 0:
-      return false
-
-    for inputRecord in buffer[0 ..< numberOfEventsRead.int]:
-      toRead.inc()
-      if inputRecord.EventType == MOUSE_EVENT:
-        break
-
-    if toRead == 0:
-      return false
-
-    discard readConsoleInput(
-      getStdHandle(STD_INPUT_HANDLE), buffer.addr, toRead.DWORD, numberOfEventsRead.addr
-    )
-
-    if buffer[numberOfEventsRead - 1].EventType == MOUSE_EVENT:
-      fillGlobalMouseInfo(buffer[numberOfEventsRead - 1])
-      return true
-    else:
-      return false
-
-var gCheckMouseFirst = false
-  ## Variable to toggle whether to check for mouse input before keyboard input in `getKey()`. This is a hack to avoid getKeyAsync() starving mouse events on Windows
-  ## Unfortunally I didn't find a better way to do this.
-
 proc getKey*(): Key =
   ## Reads the next keystroke in a non-blocking manner. If there are no
   ## keypress events in the buffer, `Key.None` is returned.
@@ -924,13 +898,7 @@ proc getKey*(): Key =
   ## If the module is not intialised, `IllwillError` is raised.
   checkInit()
 
-  when defined(windows):
-    if gCheckMouseFirst and hasMouseInput():
-      return Key.Mouse
-    result = getKeyAsync(0)
-    gCheckMouseFirst = not gCheckMouseFirst
-  else:
-    result = getKeyAsync(0)
+  result = getKeyAsync(0)
 
 proc getKeyWithTimeout*(ms = 1000): Key =
   ## Reads the next keystroke with a timeout. If there were no keypress events
@@ -941,13 +909,7 @@ proc getKeyWithTimeout*(ms = 1000): Key =
   ##
   ## If the module is not intialised, `IllwillError` is raised.
   checkInit()
-  when defined(windows):
-    if gCheckMouseFirst and hasMouseInput():
-      return Key.Mouse
-    result = getKeyAsync(ms)
-    gCheckMouseFirst = not gCheckMouseFirst
-  else:
-    result = getKeyAsync(ms)
+  result = getKeyAsync(ms)
 
 type
   TerminalChar* = object
